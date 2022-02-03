@@ -16,7 +16,7 @@ https://user-images.githubusercontent.com/75141165/152280532-8d1087c4-b0e3-4a37-
 
 
 ## Dependencies
-npm ci
+Run npm ci to install mysql2, inquirer, and console.table.
 
 ## How to contribute
 Please reach out before making any changes. 
