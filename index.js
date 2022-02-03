@@ -3,7 +3,7 @@ const databaseManagement = require('./dbManager')
 
 
 
-
+//The questions used to navigate around the main menu
 mainMenu = [
     {
         type: 'list',
@@ -19,19 +19,19 @@ function promptQuestions(questions){
         if (answers.mainMenu == 'View Departments') {
             databaseManagement.getTableData('departments').then(results =>{
                 console.table(results);
-                return promptQuestions(mainMenu);
+                promptQuestions(mainMenu);
 
             });
         } else if (answers.mainMenu == 'View Roles') {
             databaseManagement.getTableData('roles').then(results =>{
                 console.table(results);
-                return promptQuestions(mainMenu);
+                promptQuestions(mainMenu);
 
             });
         }else if (answers.mainMenu == 'View Employees') {
             databaseManagement.getTableData('employees').then(results =>{
                 console.table(results);
-                return promptQuestions(mainMenu);
+                promptQuestions(mainMenu);
             });
         } else if (answers.mainMenu == 'Add a department') {
             inquirer.prompt([
@@ -41,8 +41,9 @@ function promptQuestions(questions){
                     message: 'What is your department name?'
                 }
             ]).then(answers => 
-                databaseManagement.updateTableData('departments', answers)).then(results =>{
-                    console.table(results);
+                databaseManagement.updateTable('departments', answers)).then(results =>{
+                    promptQuestions(mainMenu);
+
                 }
             );
         } else if (answers.mainMenu == 'Add a role') {
@@ -50,7 +51,7 @@ function promptQuestions(questions){
                 {   
                     type: 'input',
                     name: 'title',
-                    message: 'What is your role title?'
+                    message: 'What is the role title?'
                 },
                 {   
                     type: 'number',
@@ -63,14 +64,59 @@ function promptQuestions(questions){
                     message: 'Corresponding department ID?'
                 }
             ]).then(answers => 
-                databaseManagement.updateTableData('roles', answers)).then(results =>{
-                    console.table(results);
+                databaseManagement.updateTable('roles', answers)).then(results =>{
+                    promptQuestions(mainMenu);
+
                 }
             );
         } else if (answers.mainMenu == 'Add an employee') {
+            databaseManagement.getSpecificData("employees", "first_name").then(results => {
+            inquirer.prompt([
+                {   
+                    type: 'input',
+                    name: 'first_name',
+                    message: 'What is the employees first name?'
+                },
+                {   
+                    type: 'input',
+                    name: 'last_name',
+                    message: 'What is the employees last name?'
+                },
+                {   
+                    type: 'list',
+                    name: 'manager_id',
+                    message: 'Who is their manager?',
+                    choices: results
+                },
+                {   
+                    type: 'number',
+                    name: 'role_id',
+                    message: 'Corresponding role ID?'
+                }
+            ]).then(answers => {
+                databaseManagement.addEmployee('employees', answers)}).then(results =>{
+                    promptQuestions(mainMenu);
+
+                }
+            )})
 
         } else if (answers.mainMenu == 'Update an employee role') {
-
+            inquirer.prompt([
+            {
+                type: 'number',
+                name: 'role_id',
+                message: "What is the ID of the new role?"
+            },
+            {
+                type: 'number',
+                name: 'id',
+                message: "What is the ID of the employee to update?"
+            }]).then(results =>{
+                databaseManagement.updateEmployeeRole(results)}).then(results =>{
+                    promptQuestions(mainMenu);
+            })
+        } else if (answers.mainMenu == 'Exit'){
+            process.exit(0);
         }
     })
 }
