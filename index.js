@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const databaseManagement = require('./dbManager')
+const table =  require('console.table');
 
 
 
